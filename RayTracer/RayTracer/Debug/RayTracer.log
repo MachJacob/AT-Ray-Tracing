@@ -1,2 +1,9 @@
-﻿  main.cpp
+﻿  Camera.cpp
+  main.cpp
+D:\AT-Ray-Tracing\RayTracer\RayTracer\main.cpp(11,10): warning C4244:  'initializing': conversion from 'double' to 'float', possible loss of data
+  Matrix4x4.cpp
+  Ray.cpp
+  Transform.cpp
+  Generating Code...
+D:\AT-Ray-Tracing\RayTracer\RayTracer\main.cpp(12,62): warning C4305:  'argument': truncation from 'double' to 'float'
   RayTracer.vcxproj -> D:\AT-Ray-Tracing\RayTracer\Debug\RayTracer.exe
