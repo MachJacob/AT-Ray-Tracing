@@ -3,26 +3,37 @@
 #include "Matrix4x4.h"
 #include "Ray.h"
 
-bool hitSphere(const Vector3& _centre, float _radius, const Ray& _ray)
+float hitSphere(const Vector3& _centre, float _radius, const Ray& _ray)
 {
 	Vector3 oc = _ray.Origin() - _centre;
 	float a = _ray.Direction().dot(_ray.Direction());
 	float b = 2.0 * oc.dot(_ray.Direction());
 	float c = oc.dot(oc) - _radius * _radius;
 	float discriminant = b * b - 4 * a * c;
-	return (discriminant > 0);
+	if (discriminant < 0)
+	{
+		return -1;
+	}
+	else
+	{
+		return (-b - std::sqrt(discriminant)) / (2.0 * a);
+	}
 }
 
 Vector3 Colour(const Ray& _r)
 {
-	if (hitSphere(Vector3(0.0, 0.0, -1.0), 0.5, _r))
-	{
-		return Vector3(1, 0, 0);
-	}
-	_r.Direction().normalise();
-	Vector3 direction = _r.Direction();
+	float t = hitSphere(Vector3(0.0, 0.0, -1.0), 0.5, _r);
 
-	float t = 0.5 * (direction.y + 1.0);
+	if (t > 0.0)
+	{
+		Vector3 N = _r.PointAt(t) - Vector3(0, 0, -1);
+		N.normalise();
+		return Vector3(N.x + 1, N.y + 1, N.z + 1) * 0.5;
+	}
+	Vector3 unitDir = _r.Direction();
+	unitDir.normalise();
+
+	t = 0.5 * (unitDir.y + 1.0);
 	return Vector3(1, 1, 1) * (1.0f - t) + Vector3(0.5, 0.7, 1.0) * t;
 }
 
@@ -52,9 +63,9 @@ int main()
 				window.close();
 		}
 
-		Vector3 lowerLeft(-2.0, -1.0, -1.0);
+		Vector3 lowerLeft(-2.0, 1.0, -1.0);
 		Vector3 horizontal(4.0, 0.0, 0.0);
-		Vector3 vertical(0.0, 2.0, 0.0);
+		Vector3 vertical(0.0, -2.0, 0.0);
 		Vector3 origin(0.0, 0.0, 0.0);
 
 		for (int i = height - 1; i >= 0; i--)
