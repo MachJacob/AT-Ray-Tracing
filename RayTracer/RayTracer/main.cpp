@@ -2,49 +2,33 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "Ray.h"
+#include "Sphere.h"
+#include "HitableList.h"
 
-float hitSphere(const Vector3& _centre, float _radius, const Ray& _ray)
+Vector3 Colour(const Ray& _r, Hitable* _world)
 {
-	Vector3 oc = _ray.Origin() - _centre;
-	float a = _ray.Direction().dot(_ray.Direction());
-	float b = 2.0 * oc.dot(_ray.Direction());
-	float c = oc.dot(oc) - _radius * _radius;
-	float discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
+	hitRecord rec;
+
+	if (_world->Hit(_r, 0.0, 100000, rec))
 	{
-		return -1;
+		return Vector3(rec.normal.x + 1, rec.normal.y + 1, rec.normal.z + 1) * 0.5;
 	}
 	else
 	{
-		return (-b - std::sqrt(discriminant)) / (2.0 * a);
+		Vector3 unitDir = _r.dir.normalised();
+		float t = 0.5 * (unitDir.y + 1);
+		return  Vector3(1, 1, 1) * (1 - t) + Vector3(0.5, 0.7, 1) * t;
 	}
-}
-
-Vector3 Colour(const Ray& _r)
-{
-	float t = hitSphere(Vector3(0.0, 0.0, -1.0), 0.5, _r);
-
-	if (t > 0.0)
-	{
-		Vector3 N = _r.PointAt(t) - Vector3(0, 0, -1);
-		N.normalise();
-		return Vector3(N.x + 1, N.y + 1, N.z + 1) * 0.5;
-	}
-	Vector3 unitDir = _r.Direction();
-	unitDir.normalise();
-
-	t = 0.5 * (unitDir.y + 1.0);
-	return Vector3(1, 1, 1) * (1.0f - t) + Vector3(0.5, 0.7, 1.0) * t;
 }
 
 int main()
 {
 	int width = 200;
 	int height = 100;
+
 	sf::RenderWindow window(sf::VideoMode(width, height), "Ray Tracing works!");
 	sf::CircleShape shape(100.f);
 	shape.setFillColor(sf::Color::Green);
-
 
 	window.setFramerateLimit(30);
 	sf::VertexArray pointmap(sf::Points, width * height);
@@ -68,14 +52,23 @@ int main()
 		Vector3 vertical(0.0, -2.0, 0.0);
 		Vector3 origin(0.0, 0.0, 0.0);
 
+		Hitable* list[2];
+		list[0] = new Sphere(Vector3(0, 0, -1), 0.5);
+		list[1] = new Sphere(Vector3(0, -100.5, -1), 100);
+
+		Hitable* world = new HitableList(list, 2);
+
 		for (int i = height - 1; i >= 0; i--)
 		{
 			for (int j = 0; j < width; j++)
 			{
 				float u = float(j) / width;
 				float v = float(i) / height;
+
 				Ray raymond(origin, lowerLeft + (horizontal * u) + (vertical * v));
-				Vector3 col = Colour(raymond);
+
+				Vector3 p = raymond.PointAt(2.0);
+				Vector3 col = Colour(raymond, world);
 
 				int ir = int(255.99 * col.x);
 				int ig = int(255.99 * col.y);

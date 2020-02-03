@@ -36,8 +36,13 @@ typedef struct Vector3
 
 	//magnitude
 	float magnitude() { return std::sqrt(x * x + y * y + z * z); }
+	float magnitude() const { return std::sqrt(x * x + y * y + z * z); }
 
 	//normalise
 	void normalise() {float mag = magnitude();
 					if (mag > 0.0f) { x = x * (1 / mag), y = y * (1 / mag), z = z * (1 / mag); }}
+	Vector3 normalised() const {
+		float mag = magnitude();
+		if (mag > 0.0f) { return Vector3(x * (1 / mag), y * (1 / mag), z * (1 / mag)); }
+	}
 };
