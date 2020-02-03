@@ -379,3 +379,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 *.tlog
+
+RayTracer/RayTracer/Debug/vc142\.idb

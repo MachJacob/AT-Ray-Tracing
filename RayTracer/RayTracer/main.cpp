@@ -4,6 +4,7 @@
 #include "Ray.h"
 #include "Sphere.h"
 #include "HitableList.h"
+#include "Camera.h"
 
 Vector3 Colour(const Ray& _r, Hitable* _world)
 {
@@ -47,16 +48,12 @@ int main()
 				window.close();
 		}
 
-		Vector3 lowerLeft(-2.0, 1.0, -1.0);
-		Vector3 horizontal(4.0, 0.0, 0.0);
-		Vector3 vertical(0.0, -2.0, 0.0);
-		Vector3 origin(0.0, 0.0, 0.0);
-
 		Hitable* list[2];
 		list[0] = new Sphere(Vector3(0, 0, -1), 0.5);
 		list[1] = new Sphere(Vector3(0, -100.5, -1), 100);
 
 		Hitable* world = new HitableList(list, 2);
+		Camera cam;
 
 		for (int i = height - 1; i >= 0; i--)
 		{
@@ -65,7 +62,7 @@ int main()
 				float u = float(j) / width;
 				float v = float(i) / height;
 
-				Ray raymond(origin, lowerLeft + (horizontal * u) + (vertical * v));
+				Ray raymond = cam.GetRay(u, v);
 
 				Vector3 p = raymond.PointAt(2.0);
 				Vector3 col = Colour(raymond, world);
