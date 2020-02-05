@@ -5,14 +5,18 @@
 #include "Sphere.h"
 #include "HitableList.h"
 #include "Camera.h"
+#include "Random.h"
+#include <iostream>
+#include <cfloat>
 
 Vector3 Colour(const Ray& _r, Hitable* _world)
 {
 	hitRecord rec;
 
-	if (_world->Hit(_r, 0.0, 100000, rec))
+	if (_world->Hit(_r, 0.001, FLT_MAX, rec))
 	{
-		return Vector3(rec.normal.x + 1, rec.normal.y + 1, rec.normal.z + 1) * 0.5;
+		Vector3 target = rec.p + rec.normal + RandomUnitSphere();
+		return Colour(Ray(rec.p, target - rec.p), _world) * 0.5;
 	}
 	else
 	{
@@ -26,17 +30,46 @@ int main()
 {
 	int width = 200;
 	int height = 100;
+	int samples = 100;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Ray Tracing works!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
 
 	window.setFramerateLimit(30);
-	sf::VertexArray pointmap(sf::Points, width * height);
+	sf::Image image;
+	image.create(width, height);
+	sf::Texture tex;
+	tex.loadFromImage(image);
+	sf::Sprite sprite;
+	Camera cam;
 
-	for (register int a = 0; a < width * height; a++) {
-		pointmap[a].position = sf::Vector2f(a % width, (a/ width) % width);
-		pointmap[a].color = sf::Color::Green;
+	Hitable* list[2];
+	list[0] = new Sphere(Vector3(0, 0, -1), 0.5);
+	list[1] = new Sphere(Vector3(0, -100.5, -1), 100);
+
+	Hitable* world = new HitableList(list, 2);
+
+	for (int i = height - 1; i >= 0; i--)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			Vector3 col(0, 0, 0);
+			for (int s = 0; s < samples; s++)
+			{
+				float u = float(j + RandomDouble()) / float(width);
+				float v = float(i + RandomDouble()) / float(height);
+
+				Ray raymond = cam.GetRay(u, v);
+
+				Vector3 p = raymond.PointAt(2.0);
+				col += Colour(raymond, world);
+			}
+			col /= float(samples);
+			int ir = int(255.99 * std::sqrt(col.x));
+			int ig = int(255.99 * std::sqrt(col.y));
+			int ib = int(255.99 * std::sqrt(col.z));
+			image.setPixel(j, i, sf::Color(ir, ig, ib));
+		}
+		//std::cout << i << std::endl;
 	}
 
 	while (window.isOpen())
@@ -48,45 +81,14 @@ int main()
 				window.close();
 		}
 
-		Hitable* list[2];
-		list[0] = new Sphere(Vector3(0, 0, -1), 0.5);
-		list[1] = new Sphere(Vector3(0, -100.5, -1), 100);
-
-		Hitable* world = new HitableList(list, 2);
-		Camera cam;
-
-		for (int i = height - 1; i >= 0; i--)
-		{
-			for (int j = 0; j < width; j++)
-			{
-				float u = float(j) / width;
-				float v = float(i) / height;
-
-				Ray raymond = cam.GetRay(u, v);
-
-				Vector3 p = raymond.PointAt(2.0);
-				Vector3 col = Colour(raymond, world);
-
-				int ir = int(255.99 * col.x);
-				int ig = int(255.99 * col.y);
-				int ib = int(255.99 * col.z);
-				pointmap[i * width + j].color.r = ir;
-				pointmap[i * width + j].color.g = ig;
-				pointmap[i * width + j].color.b = ib;
-			}
-		}
-
 		window.clear();
-		window.draw(pointmap);
+		tex.update(image);
+		sprite.setTexture(tex);
+		window.draw(sprite);
+		//window.draw(pointmap);
 		//</debug>
 		window.display();
 	}
-	/*Matrix4x4 test = Matrix4x4(1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 3, 5, 6, 3, 31, 1);
-	test.Print();
-	Matrix4x4 test2 = Matrix4x4(1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 3, 5, 6, 3, 31, 1);
-	test2.Print();
-	Matrix4x4 test3 = test + test2;
-	test3.Print();*/
 
 	return 0;
 }
