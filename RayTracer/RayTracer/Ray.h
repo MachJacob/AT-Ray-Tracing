@@ -1,5 +1,6 @@
 #pragma once
 #include "Transform.h"
+#include "Random.h"
 class Ray
 {
 public:

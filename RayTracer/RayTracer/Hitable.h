@@ -1,6 +1,8 @@
 #pragma once
 #include "Ray.h"
 
+class Material;
+
 struct hitRecord
 {
 	float t;
