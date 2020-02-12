@@ -16,6 +16,7 @@ bool Sphere::Hit(const Ray& _ray, float _tMin, float _tMax, hitRecord& _rec) con
 			_rec.t = temp;
 			_rec.p = _ray.PointAt(_rec.t);
 			_rec.normal = (_rec.p - centre) / radius;
+			_rec.mat = mat;
 			return true;
 		}
 		temp = (-b + sqrt(b * b - a * c) / a);
@@ -24,6 +25,7 @@ bool Sphere::Hit(const Ray& _ray, float _tMin, float _tMax, hitRecord& _rec) con
 			_rec.t = temp;
 			_rec.p = _ray.PointAt(_rec.t);
 			_rec.normal = (_rec.p - centre) / radius;
+			_rec.mat = mat;
 			return true;
 		}
 	}

@@ -6,17 +6,29 @@
 #include "HitableList.h"
 #include "Camera.h"
 #include "Random.h"
+#include "Lambertian.h"
+#include "Metal.h"
 #include <iostream>
 #include <cfloat>
 
-Vector3 Colour(const Ray& _r, Hitable* _world)
+Vector3 Colour(const Ray& _r, Hitable* _world, int depth)
 {
 	hitRecord rec;
 
 	if (_world->Hit(_r, 0.001, FLT_MAX, rec))
 	{
-		Vector3 target = rec.p + rec.normal + RandomUnitSphere();
-		return Colour(Ray(rec.p, target - rec.p), _world) * 0.5;
+		Ray scattered;
+		Vector3 attenuation;
+		if (depth < 50 && rec.mat->Scatter(_r, rec, attenuation, scattered))
+		{
+			Vector3 col = Colour(scattered, _world, depth + 1);
+			Vector3 ret = Vector3(col.x * attenuation.x, col.y * attenuation.y, col.z * attenuation.z);
+			return ret;
+		}
+		else
+		{
+			return Vector3(0, 0, 0);
+		}
 	}
 	else
 	{
@@ -42,11 +54,13 @@ int main()
 	sf::Sprite sprite;
 	Camera cam;
 
-	Hitable* list[2];
-	list[0] = new Sphere(Vector3(0, 0, -1), 0.5);
-	list[1] = new Sphere(Vector3(0, -100.5, -1), 100);
+	Hitable* list[4];
+	list[0] = new Sphere(Vector3(0, 0, -1), 0.5, new Lambertian(Vector3(0.8, 0.3, 0.3)));
+	list[1] = new Sphere(Vector3(0, -100.5, -1), 100, new Lambertian(Vector3(0.8, 0.8, 0.8)));
+	list[2] = new Sphere(Vector3(1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.6, 0.2), 0.3));
+	list[3] = new Sphere(Vector3(-1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.8, 0.8), 1.0));
 
-	Hitable* world = new HitableList(list, 2);
+	Hitable* world = new HitableList(list, 4);
 
 	for (int i = height - 1; i >= 0; i--)
 	{
@@ -61,9 +75,11 @@ int main()
 				Ray raymond = cam.GetRay(u, v);
 
 				Vector3 p = raymond.PointAt(2.0);
-				col += Colour(raymond, world);
+				col += Colour(raymond, world, 0);
 			}
 			col /= float(samples);
+			col = Vector3(std::sqrt(col.x), std::sqrt(col.y), std::sqrt(col.z));
+
 			int ir = int(255.99 * std::sqrt(col.x));
 			int ig = int(255.99 * std::sqrt(col.y));
 			int ib = int(255.99 * std::sqrt(col.z));

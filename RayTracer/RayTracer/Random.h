@@ -7,7 +7,7 @@ inline double RandomDouble()
 	return rand() / (RAND_MAX + 1.0);
 }
 
-Vector3 RandomUnitSphere()
+inline Vector3 RandomUnitSphere()
 {
 	Vector3 p;
 	do {

@@ -8,6 +8,7 @@ struct hitRecord
 	float t;
 	Vector3 p;
 	Vector3 normal;
+	Material* mat;
 };
 
 class Hitable

@@ -21,6 +21,9 @@ typedef struct Vector3
 	void operator/=(const float _s) { x /= _s, y /= _s, z /= _s; }
 	Vector3 operator/(const float _s) { return Vector3(x / _s, y / _s, z / _s); }
 
+	//random vector multiplication??????
+	inline Vector3 operator*=(const Vector3& _v) const { return Vector3(x * _v.x, y * _v.y, z * _v.z); }
+
 	//dot product
 	float operator*(const Vector3& _v) { return x * _v.x + y * _v.y + z * _v.z; }
 	float dot(const Vector3& _v) { return x * _v.x + y * _v.y + z * _v.z; }
