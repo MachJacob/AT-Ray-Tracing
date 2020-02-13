@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <SFML/Graphics.hpp>
 #include "Vector3.h"
 #include "Matrix4x4.h"
@@ -54,6 +55,7 @@ int main()
 	tex.loadFromImage(image);
 	sf::Sprite sprite;
 	Camera cam;
+	//Camera cam(90, float(width)/float(height));
 
 	Hitable* list[5];
 	list[0] = new Sphere(Vector3(0, 0, -1), 0.5, new Lambertian(Vector3(0.1, 0.2, 0.5)));
