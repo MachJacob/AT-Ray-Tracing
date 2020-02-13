@@ -15,6 +15,7 @@ typedef struct Vector3
 	Vector3 operator+(const Vector3& _v) const { return Vector3(x + _v.x, y + _v.y, z + _v.z); }
 	void operator-=(const Vector3& _v) { x -= _v.x, y -= _v.y, z -= _v.z; }
 	Vector3 operator-(const Vector3& _v) const { return Vector3(x - _v.x, y - _v.y, z - _v.z); }
+	Vector3 operator-() const { return Vector3(-x, -y, -z); }
 	void operator*=(const float _s) { x *= _s, y *= _s, z *= _s; }
 	Vector3 operator*(const float _s) { return Vector3(x * _s, y * _s, z * _s); }
 	Vector3 operator*(const float _s) const { return Vector3(x * _s, y * _s, z * _s); }

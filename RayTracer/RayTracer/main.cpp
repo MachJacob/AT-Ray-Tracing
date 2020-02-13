@@ -8,6 +8,7 @@
 #include "Random.h"
 #include "Lambertian.h"
 #include "Metal.h"
+#include "Dialectic.h"
 #include <iostream>
 #include <cfloat>
 
@@ -54,11 +55,12 @@ int main()
 	sf::Sprite sprite;
 	Camera cam;
 
-	Hitable* list[4];
-	list[0] = new Sphere(Vector3(0, 0, -1), 0.5, new Lambertian(Vector3(0.8, 0.3, 0.3)));
-	list[1] = new Sphere(Vector3(0, -100.5, -1), 100, new Lambertian(Vector3(0.8, 0.8, 0.8)));
-	list[2] = new Sphere(Vector3(1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.6, 0.2), 0.3));
-	list[3] = new Sphere(Vector3(-1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.8, 0.8), 1.0));
+	Hitable* list[5];
+	list[0] = new Sphere(Vector3(0, 0, -1), 0.5, new Lambertian(Vector3(0.1, 0.2, 0.5)));
+	list[1] = new Sphere(Vector3(0, -100.5, -1), 100, new Lambertian(Vector3(0.8, 0.8, 0.0)));
+	list[2] = new Sphere(Vector3(1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.6, 0.2), 0.0));
+	list[3] = new Sphere(Vector3(-1, 0, -1), 0.5, new Dialectic(1.5));
+	list[3] = new Sphere(Vector3(-1, 0, -1), -0.45, new Dialectic(1.5));
 
 	Hitable* world = new HitableList(list, 4);
 

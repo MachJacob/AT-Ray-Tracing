@@ -19,11 +19,6 @@ public:
 		return (scattered.dir.dot(_rec.normal) > 0);
 	}
 
-	Vector3 Reflect(Vector3& _v, const Vector3& _n) const
-	{
-		return _v - _n * (_v.dot(_n) * 2);
-	}
-
 	Vector3 albedo;
 	float fuzz;
 };
