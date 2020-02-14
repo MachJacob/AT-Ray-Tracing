@@ -10,6 +10,17 @@ typedef struct Vector3
 	float y;
 	float z;
 
+	float Idx(float idx) {
+		if (idx == 0) return x;
+		else if (idx == 1) return y;
+		else if (idx == 2) return z;
+	}
+	float Idx(float idx) const {
+		if (idx == 0) return x;
+		else if (idx == 1) return y;
+		else if (idx == 2) return z;
+	}
+
 	//basic operations
 	void operator+=(const Vector3& _v) { x += _v.x, y += _v.y, z += _v.z; }
 	Vector3 operator+(const Vector3& _v) const { return Vector3(x + _v.x, y + _v.y, z + _v.z); }

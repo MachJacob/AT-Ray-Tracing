@@ -5,6 +5,7 @@
 #include "Ray.h"
 #include "Sphere.h"
 #include "HitableList.h"
+#include "BVH.h"
 #include "Camera.h"
 #include "Random.h"
 #include "Lambertian.h"
@@ -62,9 +63,10 @@ int main()
 	list[1] = new Sphere(Vector3(0, -100.5, -1), 100, new Lambertian(Vector3(0.8, 0.8, 0.0)));
 	list[2] = new Sphere(Vector3(1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.6, 0.2), 0.0));
 	list[3] = new Sphere(Vector3(-1, 0, -1), 0.5, new Dialectic(1.5));
-	list[3] = new Sphere(Vector3(-1, 0, -1), -0.45, new Dialectic(1.5));
+	list[4] = new Sphere(Vector3(-1, 0, -1), -0.45, new Dialectic(1.5));
 
-	Hitable* world = new HitableList(list, 4);
+	//Hitable* world = new HitableList(list, 5);
+	Hitable* world = new BVHNode(list, 5, 0.0, 1.0);
 
 	for (int i = height - 1; i >= 0; i--)
 	{
