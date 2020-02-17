@@ -41,6 +41,51 @@ Vector3 Colour(const Ray& _r, Hitable* _world, int depth)
 	}
 }
 
+Hitable* RandomScene()
+{
+	int n = 500;
+	Hitable** list = new Hitable * [n + 1];
+	list[0] = new Sphere(Vector3(0, -1000, 0), 1000, new Lambertian(Vector3(0.5, 0.5, 0.5)));
+	int i = 1;
+	for (int a = -11; a < 11; a++)
+	{
+		for (int b = -11; b < 11; b++)
+		{
+			float choseMat = RandomDouble();
+			Vector3 centre(a + 0.9 * RandomDouble(), 0.2, b + 0.9 * RandomDouble());
+			if ((centre - Vector3(4, 0.2, 0)).magnitude() > 0.9)
+			{
+				if (choseMat < 0.8)
+				{
+					list[i++] = new Sphere(centre, 0.2,
+						new Lambertian(Vector3(RandomDouble() * RandomDouble(),
+							RandomDouble() * RandomDouble(),
+							RandomDouble() * RandomDouble())));
+				}
+				else if (choseMat < 0.95)
+				{
+					list[i++] = new Sphere(centre, 0.2, 
+						new Metal(Vector3(	0.5 * (1 + RandomDouble()), 
+											0.5 * (1 + RandomDouble()), 
+											0.5 * (1 + RandomDouble())), 
+							0.5 * RandomDouble()));
+				}
+				else
+				{
+					list[i++] = new Sphere(centre, 0.2, new Dialectic(1.5));
+				}
+			}
+		}
+	}
+
+	list[i++] = new Sphere(Vector3(0, 1, 0), 1.0, new Dialectic(1.5));
+	list[i++] = new Sphere(Vector3(-4, 1, 0), 1.0, new Lambertian(Vector3(0.4, 0.2, 0.1)));
+	list[i++] = new Sphere(Vector3(4, 1, 0), 1.0, new Metal(Vector3(0.7, 0.6, 0.5), 0.0));
+
+	return new HitableList(list, i);
+	//return new BVHNode(list, i, 0, 1);
+}
+
 int main()
 {
 	int width = 200;
@@ -58,15 +103,16 @@ int main()
 	Camera cam;
 	//Camera cam(90, float(width)/float(height));
 
-	Hitable* list[5];
+	Hitable* list[4];
 	list[0] = new Sphere(Vector3(0, 0, -1), 0.5, new Lambertian(Vector3(0.1, 0.2, 0.5)));
 	list[1] = new Sphere(Vector3(0, -100.5, -1), 100, new Lambertian(Vector3(0.8, 0.8, 0.0)));
 	list[2] = new Sphere(Vector3(1, 0, -1), 0.5, new Metal(Vector3(0.8, 0.6, 0.2), 0.0));
-	list[3] = new Sphere(Vector3(-1, 0, -1), 0.5, new Dialectic(1.5));
-	list[4] = new Sphere(Vector3(-1, 0, -1), -0.45, new Dialectic(1.5));
+	//list[3] = new Sphere(Vector3(-1, 0, -1), 0.5, new Dialectic(1.5));
+	list[3] = new Sphere(Vector3(-1, 0, -1), -0.45, new Dialectic(1.5));
 
 	//Hitable* world = new HitableList(list, 5);
-	Hitable* world = new BVHNode(list, 5, 0.0, 1.0);
+	Hitable* world = new BVHNode(list, 4, 0.0, 1.0);
+	//Hitable* world = RandomScene();
 
 	for (int i = height - 1; i >= 0; i--)
 	{
