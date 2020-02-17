@@ -113,7 +113,7 @@ bool BVHNode::Hit(const Ray& _r, float _tMin, float _tMax, hitRecord& _rec) cons
 	{
 		hitRecord leftRec, rightRec;
 		bool hitLeft = left->Hit(_r, _tMin, _tMax, leftRec);
-		bool hitRight = left->Hit(_r, _tMin, _tMax, rightRec);
+		bool hitRight = right->Hit(_r, _tMin, _tMax, rightRec);
 		if (hitLeft && hitRight)
 		{
 			if (leftRec.t < rightRec.t)
