@@ -82,8 +82,8 @@ Hitable* RandomScene()
 	list[i++] = new Sphere(Vector3(-4, 1, 0), 1.0, new Lambertian(Vector3(0.4, 0.2, 0.1)));
 	list[i++] = new Sphere(Vector3(4, 1, 0), 1.0, new Metal(Vector3(0.7, 0.6, 0.5), 0.0));
 
-	return new HitableList(list, i);
-	//return new BVHNode(list, i, 0, 1);
+	//return new HitableList(list, i);
+	return new BVHNode(list, i, 0, 1);
 }
 
 int main()
